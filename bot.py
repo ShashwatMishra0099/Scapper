@@ -2,6 +2,7 @@ from telethon.sync import TelegramClient
 from telethon.tl.types import ChannelParticipantsSearch
 from telethon.tl.functions.channels import GetParticipantsRequest
 import json
+import sys
 
 api_id = '29597128'
 api_hash = 'feea1340241265662aec5d75678e9573'
@@ -30,8 +31,7 @@ async def scrape_group(group_name):
     
     return users
 
-async def main():
-    group_name = input("speeds_net")
+async def main(group_name):
     users = await scrape_group(group_name)
     
     with open('scraped_users.json', 'w') as f:
@@ -42,5 +42,9 @@ async def main():
         print(f"Username: {user['username']}, User ID: {user['id']}")
 
 if __name__ == '__main__':
+    if len(sys.argv) < 2:
+        print("Usage: python bot.py <group_name>")
+        sys.exit(1)
+    group_name = sys.argv[1]  # Get group name from command line argument
     import asyncio
-    asyncio.run(main())
+    asyncio.run(main(group_name))
