@@ -1,11 +1,12 @@
 from telethon.sync import TelegramClient
 from telethon.tl.types import ChannelParticipantsSearch
 from telethon.tl.functions.channels import GetParticipantsRequest
-import json
-import sys
+from telethon import TelegramClient, events
 
 api_id = '29597128'
 api_hash = 'feea1340241265662aec5d75678e9573'
+bot_token = '7176712779:AAF5HI-iinebKwiE4thcMPR-YuZeam9zgLo'
+chat_id = '7176712779'
 
 async def scrape_group(group_name):
     client = TelegramClient('anon', api_id, api_hash)
@@ -31,20 +32,19 @@ async def scrape_group(group_name):
     
     return users
 
-async def main(group_name):
+async def send_message(message):
+    async with TelegramClient('anon', api_id, api_hash) as client:
+        await client.send_message(chat_id, message)
+
+async def main():
+    group_name = input("speeds_net")
     users = await scrape_group(group_name)
-    
-    with open('scraped_users.json', 'w') as f:
-        json.dump(users, f, indent=4)
-    
-    print("Scraped User Data:")
+    scraped_data = "Scraped User Data:\n"
     for user in users:
-        print(f"Username: {user['username']}, User ID: {user['id']}")
+        scraped_data += f"Username: {user['username']}, User ID: {user['id']}\n"
+    
+    await send_message(scraped_data)
 
 if __name__ == '__main__':
-    if len(sys.argv) < 2:
-        print("Usage: python bot.py <group_name>")
-        sys.exit(1)
-    group_name = sys.argv[1]  # Get group name from command line argument
     import asyncio
-    asyncio.run(main(group_name))
+    asyncio.run(main())
