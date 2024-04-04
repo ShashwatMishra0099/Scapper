@@ -2,6 +2,7 @@ from telethon.sync import TelegramClient
 from telethon.tl.types import ChannelParticipantsSearch
 from telethon.tl.functions.channels import GetParticipantsRequest
 from telethon import TelegramClient, events
+import os
 
 api_id = '29597128'
 api_hash = 'feea1340241265662aec5d75678e9573'
@@ -37,7 +38,11 @@ async def send_message(message):
         await client.send_message(chat_id, message)
 
 async def main():
-    group_name = input("speeds_net")
+    group_name = os.getenv("TELEGRAM_GROUP_NAME")
+    if not group_name:
+        print("Error: TELEGRAM_GROUP_NAME environment variable not set.")
+        return
+    
     users = await scrape_group(group_name)
     scraped_data = "Scraped User Data:\n"
     for user in users:
