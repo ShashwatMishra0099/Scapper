@@ -41,13 +41,17 @@ async def send_pdf_via_bot(file_name):
 
 async def main():
     group_name = os.environ.get("TELEGRAM_GROUP_NAME")
+    if not group_name:
+        print("Please set the TELEGRAM_GROUP_NAME environment variable.")
+        return
+    
     users = await scrape_group(group_name)
     file_name = f"{group_name}_scraped_users.pdf"
     create_pdf(users, file_name)
     await send_pdf_via_bot(file_name)
     os.remove(file_name)
     print("Scraped user data has been saved as a PDF and sent via Telegram bot.")
-
+    
 if __name__ == '__main__':
     import asyncio
     asyncio.run(main())
