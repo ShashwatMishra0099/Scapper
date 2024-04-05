@@ -38,6 +38,7 @@ async def send_message(message):
         await client.send_message(chat_id, message)
 
 async def main():
+    async def main():
     group_name = os.getenv("TELEGRAM_GROUP_NAME")
     if not group_name:
         print("Error: TELEGRAM_GROUP_NAME environment variable not set.")
@@ -49,7 +50,7 @@ async def main():
         scraped_data += f"Username: {user['username']}, User ID: {user['id']}\n"
     
     await send_message(scraped_data)
-
+    
 if __name__ == '__main__':
     import asyncio
     asyncio.run(main())
