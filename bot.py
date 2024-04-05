@@ -1,7 +1,7 @@
 from telethon.sync import TelegramClient
 from telethon.tl.types import ChannelParticipantsSearch
 from telethon.tl.functions.channels import GetParticipantsRequest
-from telethon import TelegramClient, events
+from fpdf import FPDF
 import os
 
 api_id = '29597128'
@@ -33,24 +33,34 @@ async def scrape_group(group_name):
     
     return users
 
-async def send_message(message):
+def create_pdf(users, file_name):
+    pdf = FPDF()
+    pdf.add_page()
+    pdf.set_font("Arial", size=12)
+    for user in users:
+        pdf.cell(200, 10, txt=f"Username: {user['username']}, User ID: {user['id']}", ln=True)
+    pdf.output(file_name)
+
+async def send_pdf_via_bot(file_name):
     async with TelegramClient('anon', api_id, api_hash) as client:
-        await client.send_message(chat_id, message)
+        await client.send_file(chat_id, file_name)
 
 async def main():
-    async def main():
-    group_name = os.getenv("TELEGRAM_GROUP_NAME")
-    if not group_name:
-        print("Error: TELEGRAM_GROUP_NAME environment variable not set.")
-        return
-    
-    users = await scrape_group(group_name)
-    scraped_data = "Scraped User Data:\n"
-    for user in users:
-        scraped_data += f"Username: {user['username']}, User ID: {user['id']}\n"
-    
-    await send_message(scraped_data)
-    
+    async with TelegramClient('anon', api_id, api_hash) as client:
+        @client.on(events.NewMessage(pattern='/start', chats=[chat_id]))
+        async def start_handler(event):
+            # Start the bot functionality when /start command is received
+            group_name = input("Enter the name of the public Telegram group: ")
+            users = await scrape_group(group_name)
+            file_name = f"{group_name}_scraped_users.pdf"
+            create_pdf(users, file_name)
+            await send_pdf_via_bot(file_name)
+            os.remove(file_name)
+            print("Scraped user data has been saved as a PDF and sent via Telegram bot.")
+
+        # Run the client event loop
+        await client.run_until_disconnected()
+
 if __name__ == '__main__':
     import asyncio
     asyncio.run(main())
