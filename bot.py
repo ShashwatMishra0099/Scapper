@@ -4,10 +4,10 @@ from telethon.tl.functions.channels import GetParticipantsRequest
 from fpdf import FPDF
 import os
 
-api_id = '29597128'
-api_hash = 'feea1340241265662aec5d75678e9573'
-bot_token = '7176712779:AAF5HI-iinebKwiE4thcMPR-YuZeam9zgLo'
-chat_id = '7176712779'
+api_id = ''
+api_hash = ''
+bot_token = ''
+chat_id = ''
 
 async def scrape_group(group_name):
     client = TelegramClient('anon', api_id, api_hash)
